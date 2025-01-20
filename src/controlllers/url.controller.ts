@@ -1,54 +1,48 @@
 import { Request, Response } from "express";
 import { IURLService } from "../interfaces/url/IUrlService";
 import { urlService } from "../service/url.service";
-import { IUser } from "../models/user";
-import { ObjectId } from 'mongodb';
-
+import { ObjectId } from "mongodb";
+import { HttpStatus } from "../enums/httpStatus";
+import { ErrorMessages } from "../enums/messages";
 
 class URLController {
   constructor(private _urlService: IURLService) {}
-  async createShortURL(req: Request, res: Response): Promise<void> {  
+
+  async createShortURL(req: Request, res: Response): Promise<void> {
     try {
       const { longUrl, customAlias, topic } = req.body;
+      const userId = req.user?.userId;
 
-      const userId=req.user?.userId;
       if (!userId) {
-        res.status(401).json({ error: "User not authenticated" });
+        res.status(HttpStatus.UNAUTHORIZED).json({ error: ErrorMessages.USER_NOT_AUTHENTICATED });
         return;
       }
-      console.log('Received request to create short URL:', { longUrl, customAlias, topic, userId });
-  
+
       const url = await this._urlService.createShortURL(longUrl, customAlias, userId, topic);
-      
-      console.log('Returning response:', { url });
-      res.status(201).json({ url });
-      
+      res.status(HttpStatus.CREATED).json({ url });
     } catch (error) {
-      console.error('Error occurred:', error);
       if (!res.headersSent) {
-        res.status(500).json({ 
-          error: error instanceof Error ? error.message : "An unknown error occurred" 
+        res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+          error: error instanceof Error ? error.message : ErrorMessages.UNKNOWN_ERROR,
         });
       }
     }
   }
-  
 
   async getAnalytics(req: Request, res: Response): Promise<Response> {
     try {
       const { alias } = req.params;
       const analytics = await this._urlService.getAnalyticsByAlias(alias);
+
       if (!analytics) {
-        return res.status(404).json({ error: "URL not found" });
+        return res.status(HttpStatus.NOT_FOUND).json({ error: ErrorMessages.URL_NOT_FOUND });
       }
-      return res.json(analytics);
+
+      return res.status(HttpStatus.OK).json(analytics);
     } catch (error) {
-      if (error instanceof Error) {
-        return res.status(500).json({ error: error.message });
-      } else {
-        console.error("Unknown error type:", error);
-        return res.status(500).json({ error: "An unknown error occurred" });
-      }
+      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+        error: error instanceof Error ? error.message : ErrorMessages.UNKNOWN_ERROR,
+      });
     }
   }
 
@@ -56,77 +50,65 @@ class URLController {
     try {
       const { topic } = req.params;
       const analytics = await this._urlService.getURLsByTopic(topic);
-  
+
       if (!analytics) {
-        return res.status(404).json({ error: "No URLs found for the specified topic" });
+        return res.status(HttpStatus.NOT_FOUND).json({ error: ErrorMessages.TOPIC_NOT_FOUND });
       }
-  
-      return res.json({
+
+      return res.status(HttpStatus.OK).json({
         totalClicks: analytics.totalClicks,
         uniqueUsers: analytics.uniqueUsers,
         clicksByDate: analytics.clicksByDate,
         urls: analytics.urls,
       });
     } catch (error) {
-      if (error instanceof Error) {
-        return res.status(500).json({ error: error.message });
-      } else {
-        console.error("Unknown error type:", error);
-        return res.status(500).json({ error: "An unknown error occurred" });
-      }
+      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+        error: error instanceof Error ? error.message : ErrorMessages.UNKNOWN_ERROR,
+      });
     }
   }
-  
-    
 
   async redirectToLongUrl(req: Request, res: Response): Promise<void> {
-    console.log("Received request to redirect to long URL");
     try {
       const { alias } = req.params;
       const userAgent = req.headers["user-agent"] || "";
       const ipAddress = req.ip;
-  
+
       const longUrl = await this._urlService.redirectAndTrackAnalytics(alias, userAgent, ipAddress);
-  
+
       if (!longUrl) {
-        res.status(404).json({ error: "Short URL not found" });
-        return; 
+        res.status(HttpStatus.NOT_FOUND).json({ error: ErrorMessages.URL_NOT_FOUND });
+        return;
       }
-  
+
       res.redirect(longUrl);
     } catch (error) {
-      console.error("Error occurred:", error);
-  
-      res.status(500).json({
-        error: error instanceof Error ? error.message : "An unknown error occurred",
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+        error: error instanceof Error ? error.message : ErrorMessages.UNKNOWN_ERROR,
       });
     }
   }
-  
 
   async getOverallAnalytics(req: Request, res: Response): Promise<Response> {
     try {
-     console.log("entering")
-     if(!req.user){
-      return res.status(401).json({ error: "User not authenticated" });
-     }
 
-       
-      
+      if (!req.user) {
+        return res.status(HttpStatus.UNAUTHORIZED).json({ error: ErrorMessages.USER_NOT_AUTHENTICATED });
+      }
+
       const userId = req.user.userId;
-      if(!userId) {
-        return res.status(401).json({ error: "User not authenticated" });
+      if (!userId) {
+        return res.status(HttpStatus.UNAUTHORIZED).json({ error: ErrorMessages.USER_NOT_AUTHENTICATED });
       }
-      console.log("userId",userId);
-       
-    const userIdObj = new ObjectId(userId);
+
+      const userIdObj = new ObjectId(userId);
       const analytics = await this._urlService.getOverallAnalytics(userIdObj);
-  
+
       if (!analytics) {
-        return res.status(404).json({ error: "No URLs found for the specified user" });
+        return res.status(HttpStatus.NOT_FOUND).json({ error: ErrorMessages.TOPIC_NOT_FOUND });
       }
-  
-      return res.json({
+
+      return res.status(HttpStatus.OK).json({
         totalUrls: analytics.totalUrls,
         totalClicks: analytics.totalClicks,
         uniqueUsers: analytics.uniqueUsers,
@@ -135,18 +117,11 @@ class URLController {
         deviceType: analytics.deviceType,
       });
     } catch (error) {
-      if (error instanceof Error) {
-        return res.status(500).json({ error: error.message });
-      } else {
-        console.error("Unknown error type:", error);
-        return res.status(500).json({ error: "An unknown error occurred" });
-      }
+      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+        error: error instanceof Error ? error.message : ErrorMessages.UNKNOWN_ERROR,
+      });
     }
   }
-  
-  
-  
-
 }
 
 export const urlController = new URLController(urlService);

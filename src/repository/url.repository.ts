@@ -7,7 +7,6 @@ class URLRepository implements IURLRepository {
     try {
       const createdUrl = await URLModel.create(urlData);
       
-      console.log('URL created in database:', createdUrl);
       
       return createdUrl;
     } catch (error) {
