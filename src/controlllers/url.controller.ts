@@ -9,7 +9,9 @@ class URLController {
   constructor(private _urlService: IURLService) {}
   async createShortURL(req: Request, res: Response): Promise<void> {  
     try {
-      const { longUrl, customAlias, topic, userId } = req.body;
+      const { longUrl, customAlias, topic } = req.body;
+
+      const userId=req.user?.userId;
       if (!userId) {
         res.status(401).json({ error: "User not authenticated" });
         return;

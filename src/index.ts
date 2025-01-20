@@ -18,11 +18,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-app.use(cors({   
-  origin: process.env.clientUrl,  
-  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'], 
-  credentials: true        
-}));
+
 
 app.use(session({
   secret: 'your-secret-key',  

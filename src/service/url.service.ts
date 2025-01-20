@@ -14,6 +14,13 @@ class URLService implements IURLService {
       const userIdObject = new Types.ObjectId(userId);
       
       console.log('Creating short URL:', { longUrl, customAlias, userId, topic });
+
+      if (customAlias) {
+        const existingUrl = await this._urlRepository.findURLByAlias(customAlias);
+        if (existingUrl) {
+          throw new Error('Custom alias already exists. Please choose a different alias.');
+        }
+      }
       
       const url = await this._urlRepository.createURL({ 
         longUrl, 
