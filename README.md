@@ -1,153 +1,112 @@
-Advanced URL Shortener API
-A powerful URL shortening service with comprehensive analytics, custom aliases, and rate limiting capabilities. This API allows users to create shortened URLs, track their performance, and analyze usage patterns across different devices and operating systems.
-Live Demo
-API Base URL: https://url-shortener-dxn4.onrender.com
-Features
+# 🔗 Advanced URL Shortener with Analytics
 
-URL Shortening
+## 🌟 Project Overview
 
-Create short URLs with optional custom aliases
-Topic-based URL grouping (acquisition, activation, retention)
-Rate limiting to prevent abuse
+A powerful URL shortening service that goes beyond simple link compression. This application offers:
+- 🔐 Secure user authentication
+- 🏷️ Custom URL aliases
+- 📊 Comprehensive link analytics
+- 🚀 High-performance caching
+- 🛡️ Rate limiting to prevent abuse
 
+## 🚀 Live Demo
 
-Authentication
+**Application URL**: https://url-shortener-dxn4.onrender.com
 
-JWT-based authentication system
-Secure user registration and login
+## ✨ Features
 
+### 1. URL Shortening
+- Create short, manageable links from long URLs
+- Optional custom aliases
+- Group links by topics (acquisition, activation, retention)
 
-Advanced Analytics
+### 2. Advanced Analytics
+- Track total clicks and unique users
+- Detailed OS and device type analytics
+- Granular insights by URL or topic
 
-Detailed click tracking and user engagement metrics
-Device and OS-based analytics
-Topic-wise URL performance analysis
-Overall usage statistics
+### 3. Caching & Performance
+- Redis-powered caching
+- Optimized URL retrieval and redirection
 
+## 🛠️ Tech Stack
 
-Performance Optimization
+- **Backend**: Node.js
+- **Database**: MongoDB
+- **Caching**: Redis
+- **Deployment**: Render
+- **Containerization**: Docker
 
-Redis caching implementation
-Efficient database queries
-Repository pattern for clean architecture
+## 🔧 API Endpoints
 
+### URL Shortening
+- `POST /api/shorten`: Create short URL
+- `GET /api/shorten/{alias}`: Redirect to original URL
 
+### Analytics
+- `GET /api/analytics/{alias}`: URL-specific analytics
+- `GET /api/analytics/topic/{topic}`: Topic-based analytics
+- `GET /api/analytics/overall`: Comprehensive user analytics
 
-API Endpoints
-Authentication
-CopyPOST /api/register - Register new user
-POST /api/login - User login
-URL Operations
-CopyPOST /api/shorten - Create short URL
-GET /api/shorten/{alias} - Redirect to original URL
-Analytics
-CopyGET /api/analytics/{alias} - Get specific URL analytics
-GET /api/analytics/topic/{topic} - Get topic-based analytics
-GET /api/analytics/overall - Get overall analytics
-Technology Stack
+## 🏁 Getting Started
 
-Backend: Node.js
-Database: MongoDB
-Caching: Redis
-Architecture: Repository Pattern
-Authentication: JWT
-Deployment: Docker & Render
+### Prerequisites
+- Node.js
+- MongoDB
+- Redis
+- npm
 
-Installation
+### Installation
 
-Clone the repository:
+1. Clone the repository
+```bash
+git clone <your-repo-url>
+cd url-shortener
+```
 
-bashCopygit clone <repository-url>
-cd URL_SHORTENER_BACKEND
-
-Install dependencies:
-
+2. Install dependencies
+```bash
 npm install
+```
 
-Set up environment variables:
+3. Set up environment variables
+```bash
+# Create .env file with:
+MONGODB_URI=your_mongodb_connection_string
+REDIS_URI=your_redis_connection_string
+```
 
-Run the application:
-
- Development mode
-npm run build
-
-# Production mode
+4. Run the application
+```bash
 npm start
-Docker Setup
+```
 
-Build the Docker image:
+## 🐳 Docker Deployment
 
-docker build -t skahaye2002/url-shortener .
-
-Run the container:
-
+```bash
+docker build -t url-shortener .
 docker run -p 3000:3000 url-shortener
-API Response Examples
-Create Short URL
-POST /api/shorten
-{
-  "longUrl": "https://example.com/very-long-url",
-  "customAlias": "my-custom-link",
-  "topic": "acquisition"
-}
+```
 
-Response:
-{
-  "shortUrl": "https://url-shortener-dxn4.onrender.com/my-custom-link",
-  "createdAt": "2024-01-21T10:00:00Z"
-}
-Get URL Analytics
-jsonCopyGET /api/analytics/{alias}
-{
-  "totalClicks": 150,
-  "uniqueUsers": 120,
-  "clicksByDate": [
-    {
-      "date": "2024-01-21",
-      "clicks": 25
-    }
-  ],
-  "osType": [
-    {
-      "osName": "Windows",
-      "uniqueClicks": 80,
-      "uniqueUsers": 65
-    }
-  ],
-  "deviceType": [
-    {
-      "deviceName": "desktop",
-      "uniqueClicks": 100,
-      "uniqueUsers": 85
-    }
-  ]
-}
-Architecture Overview
-The application follows the repository pattern to ensure clean separation of concerns:
+## 🚧 Challenges & Solutions
 
-Controllers handle HTTP requests and responses
-Services contain business logic
-Repositories manage data access
-Middleware handles authentication and rate limiting
+- **Rate Limiting**: Implemented token bucket algorithm
+- **Caching**: Used Redis for efficient URL lookup
+- **Analytics**: Designed scalable data collection mechanism
 
-Rate Limiting
-The API implements rate limiting to prevent abuse:
+## 🔜 Future Improvements
+- [ ] OAuth with multiple providers
+- [ ] Enhanced link management dashboard
+- [ ] Real-time analytics visualization
 
-5 requests per hour for URL creation for Users
+## 📄 License
 
+MIT License
 
-Future Improvements
+## 👥 Contributors
 
-Enhanced security features
-Advanced caching strategies
-Analytics export functionality
-Bulk URL creation
-Custom domain support
+Akshay E
 
-Contributing
+---
 
-Fork the repository
-Create your feature branch
-Commit your changes
-Push to the branch
-Create a Pull Request
+**Happy Link Shortening!** 🎉
