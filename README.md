@@ -61,7 +61,7 @@ A powerful URL shortening service that goes beyond simple link compression. This
 1. Clone the repository
 ```bash
 git clone <your-repo-url>
-cd url-shortener
+cd URL-Shortener
 ```
 
 2. Install dependencies
@@ -72,8 +72,9 @@ npm install
 3. Set up environment variables
 ```bash
 # Create .env file with:
-MONGODB_URI=your_mongodb_connection_string
-REDIS_URI=your_redis_connection_string
+MONGODB_URI="mongodb+srv://akshaykumar2002817:O6sEM0bfdGSX00f2@cluster0.fvc7c.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+JWT_SECRET=idfaisdfaskdfnalsmdfkasasdfasdfasd
+
 ```
 
 4. Run the application
@@ -84,8 +85,8 @@ npm start
 ## 🐳 Docker Deployment
 
 ```bash
-docker build -t url-shortener .
-docker run -p 3000:3000 url-shortener
+docker build -t akshaye2002/url-shortener .  
+docker push  akshaye2002/url-shortener:latest
 ```
 
 ## 🚧 Challenges & Solutions
@@ -99,9 +100,7 @@ docker run -p 3000:3000 url-shortener
 - [ ] Enhanced link management dashboard
 - [ ] Real-time analytics visualization
 
-## 📄 License
 
-MIT License
 
 ## 👥 Contributors
 
